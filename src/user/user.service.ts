@@ -39,18 +39,18 @@ export class UserService {
     return omit(await this.db.createUser(user), ['password']);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, userData: UpdateUserDto) {
     const targetUser = await this.db.getUser(id);
 
     if (!targetUser) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    if (targetUser.password !== updateUserDto.oldPassword) {
+    if (targetUser.password !== userData.oldPassword) {
       throw new ForbiddenException('Previous password is incorrect');
     }
 
-    return omit(await this.db.updateUser(id, updateUserDto), ['password']);
+    return omit(await this.db.updateUser(id, userData), ['password']);
   }
 
   async delete(id: string) {

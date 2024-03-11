@@ -26,14 +26,14 @@ export class AlbumService {
     return await this.db.createAlbum(album);
   }
 
-  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+  async update(id: string, albumData: UpdateAlbumDto) {
     const targetAlbum = await this.db.getAlbum(id);
 
     if (!targetAlbum) {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
 
-    return await this.db.updateAlbum(id, updateAlbumDto);
+    return await this.db.updateAlbum(id, albumData);
   }
 
   async delete(id: string) {

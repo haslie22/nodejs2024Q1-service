@@ -80,12 +80,12 @@ export class Database {
     return this.tracks;
   }
 
-  async getTracksByArtist(id: string): Promise<TrackEntity[]> {
-    return this.tracks.filter((track) => track.artistId === id);
+  async getTracksByArtist(artistId: string): Promise<TrackEntity[]> {
+    return this.tracks.filter((track) => track.artistId === artistId);
   }
 
-  async getTracksByAlbum(id: string): Promise<TrackEntity[]> {
-    return this.tracks.filter((track) => track.albumId === id);
+  async getTracksByAlbum(albumId: string): Promise<TrackEntity[]> {
+    return this.tracks.filter((track) => track.albumId === albumId);
   }
 
   async getTrack(id: string): Promise<TrackEntity> {
@@ -160,8 +160,8 @@ export class Database {
     return this.albums;
   }
 
-  async getAlbumsByArtist(id: string): Promise<AlbumEntity[]> {
-    return this.albums.filter((album) => album.artistId === id);
+  async getAlbumsByArtist(artistId: string): Promise<AlbumEntity[]> {
+    return this.albums.filter((album) => album.artistId === artistId);
   }
 
   async getAlbum(id: string): Promise<AlbumEntity> {

@@ -26,14 +26,14 @@ export class TrackService {
     return await this.db.createTrack(track);
   }
 
-  async update(id: string, updateTrackDto: UpdateTrackDto) {
+  async update(id: string, trackData: UpdateTrackDto) {
     const targetTrack = await this.db.getTrack(id);
 
     if (!targetTrack) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
 
-    return await this.db.updateTrack(id, updateTrackDto);
+    return await this.db.updateTrack(id, trackData);
   }
 
   async delete(id: string) {
