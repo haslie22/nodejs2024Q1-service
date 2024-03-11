@@ -200,33 +200,57 @@ export class Database {
     return this.favorites;
   }
 
-  async addTrackToFavorites(trackId: string): Promise<void> {
+  async addTrackToFavorites(trackId: string): Promise<TrackEntity> {
     const existingTrack = this.favorites.tracks.find((id) => id === trackId);
     if (!existingTrack) this.favorites.tracks.push(trackId);
+
+    return this.getTrack(trackId);
   }
 
-  async deleteTrackFromFavorites(trackId: string): Promise<void> {
+  async deleteTrackFromFavorites(trackId: string): Promise<TrackEntity> {
     const index = this.favorites.tracks.findIndex((id) => id === trackId);
     if (index !== -1) this.favorites.tracks.splice(index, 1);
+
+    return this.getTrack(trackId);
   }
 
-  async addAlbumToFavorites(albumId: string): Promise<void> {
+  async addAlbumToFavorites(albumId: string): Promise<AlbumEntity> {
     const existingAlbum = this.favorites.albums.find((id) => id === albumId);
     if (!existingAlbum) this.favorites.albums.push(albumId);
+
+    return this.getAlbum(albumId);
   }
 
-  async deleteAlbumFromFavorites(albumId: string): Promise<void> {
+  async deleteAlbumFromFavorites(albumId: string): Promise<AlbumEntity> {
     const index = this.favorites.albums.findIndex((id) => id === albumId);
     if (index !== -1) this.favorites.albums.splice(index, 1);
+
+    return this.getAlbum(albumId);
   }
 
-  async addArtistToFavorites(artistId: string): Promise<void> {
+  async addArtistToFavorites(artistId: string): Promise<ArtistEntity> {
     const existingArtist = this.favorites.artists.find((id) => id === artistId);
     if (!existingArtist) this.favorites.artists.push(artistId);
+
+    return this.getArtist(artistId);
   }
 
-  async deleteArtistFromFavorites(artistId: string): Promise<void> {
+  async deleteArtistFromFavorites(artistId: string): Promise<ArtistEntity> {
     const index = this.favorites.artists.findIndex((id) => id === artistId);
     if (index !== -1) this.favorites.artists.splice(index, 1);
+
+    return this.getArtist(artistId);
+  }
+
+  async findFavoriteTrack(trackId: string): Promise<boolean> {
+    return this.favorites.tracks.includes(trackId);
+  }
+
+  async findFavoriteAlbum(albumId: string): Promise<boolean> {
+    return this.favorites.albums.includes(albumId);
+  }
+
+  async findFavoriteArtist(artistId: string): Promise<boolean> {
+    return this.favorites.artists.includes(artistId);
   }
 }
