@@ -37,6 +37,10 @@ export class Database {
     return this.users.find((user) => user.id === id);
   }
 
+  async getUserByLogin(login: string): Promise<UserEntity> {
+    return this.users.find((user) => user.login === login);
+  }
+
   async createUser(userData: CreateUserDto): Promise<UserEntity> {
     const timestamp = Date.now();
 
