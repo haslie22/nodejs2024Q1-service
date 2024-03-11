@@ -29,15 +29,15 @@ export class Database {
     tracks: [],
   };
 
-  getUsers(): UserEntity[] {
+  async getUsers(): Promise<UserEntity[]> {
     return this.users;
   }
 
-  getUser(id: string): UserEntity {
+  async getUser(id: string): Promise<UserEntity> {
     return this.users.find((user) => user.id === id);
   }
 
-  createUser(userData: CreateUserDto): UserEntity {
+  async createUser(userData: CreateUserDto): Promise<UserEntity> {
     const timestamp = Date.now();
 
     const user: UserEntity = {
@@ -52,8 +52,8 @@ export class Database {
     return user;
   }
 
-  updateUser(id: string, userData: UpdateUserDto): UserEntity {
-    const user = this.getUser(id);
+  async updateUser(id: string, userData: UpdateUserDto): Promise<UserEntity> {
+    const user = await this.getUser(id);
     const timestamp = Date.now();
 
     Object.assign(user, {
@@ -65,22 +65,22 @@ export class Database {
     return user;
   }
 
-  deleteUser(id: string): UserEntity {
+  async deleteUser(id: string): Promise<UserEntity> {
     const index = this.users.findIndex((user) => user.id === id);
     const user = this.users.splice(index, 1)[0];
 
     return user;
   }
 
-  getTracks(): TrackEntity[] {
+  async getTracks(): Promise<TrackEntity[]> {
     return this.tracks;
   }
 
-  getTrack(id: string): TrackEntity {
+  async getTrack(id: string): Promise<TrackEntity> {
     return this.tracks.find((track) => track.id === id);
   }
 
-  createTrack(trackData: CreateTrackDto): TrackEntity {
+  async createTrack(trackData: CreateTrackDto): Promise<TrackEntity> {
     const track: TrackEntity = {
       ...trackData,
       id: uuidv4(),
@@ -90,30 +90,33 @@ export class Database {
     return track;
   }
 
-  updateTrack(id: string, trackData: UpdateTrackDto): TrackEntity {
-    const track = this.getTrack(id);
+  async updateTrack(
+    id: string,
+    trackData: UpdateTrackDto,
+  ): Promise<TrackEntity> {
+    const track = await this.getTrack(id);
 
     Object.assign(track, trackData);
 
     return track;
   }
 
-  deleteTrack(id: string): TrackEntity {
+  async deleteTrack(id: string): Promise<TrackEntity> {
     const index = this.tracks.findIndex((track) => track.id === id);
     const track = this.tracks.splice(index, 1)[0];
 
     return track;
   }
 
-  getArtists(): ArtistEntity[] {
+  async getArtists(): Promise<ArtistEntity[]> {
     return this.artists;
   }
 
-  getArtist(id: string): ArtistEntity {
+  async getArtist(id: string): Promise<ArtistEntity> {
     return this.artists.find((artist) => artist.id === id);
   }
 
-  createArtist(artistData: CreateArtistDto): ArtistEntity {
+  async createArtist(artistData: CreateArtistDto): Promise<ArtistEntity> {
     const artist: ArtistEntity = {
       id: uuidv4(),
       ...artistData,
@@ -123,30 +126,33 @@ export class Database {
     return artist;
   }
 
-  updateArtist(id: string, artistData: UpdateArtistDto): ArtistEntity {
-    const artist = this.getArtist(id);
+  async updateArtist(
+    id: string,
+    artistData: UpdateArtistDto,
+  ): Promise<ArtistEntity> {
+    const artist = await this.getArtist(id);
 
     Object.assign(artist, artistData);
 
     return artist;
   }
 
-  deleteArtist(id: string): ArtistEntity {
+  async deleteArtist(id: string): Promise<ArtistEntity> {
     const index = this.artists.findIndex((artist) => artist.id === id);
     const artist = this.artists.splice(index, 1)[0];
 
     return artist;
   }
 
-  getAlbums(): AlbumEntity[] {
+  async getAlbums(): Promise<AlbumEntity[]> {
     return this.albums;
   }
 
-  getAlbum(id: string): AlbumEntity {
+  async getAlbum(id: string): Promise<AlbumEntity> {
     return this.albums.find((album) => album.id === id);
   }
 
-  createAlbum(albumData: CreateAlbumDto): AlbumEntity {
+  async createAlbum(albumData: CreateAlbumDto): Promise<AlbumEntity> {
     const album: AlbumEntity = {
       id: uuidv4(),
       ...albumData,
@@ -156,51 +162,54 @@ export class Database {
     return album;
   }
 
-  updateAlbum(id: string, albumData: UpdateAlbumDto): AlbumEntity {
-    const album = this.getAlbum(id);
+  async updateAlbum(
+    id: string,
+    albumData: UpdateAlbumDto,
+  ): Promise<AlbumEntity> {
+    const album = await this.getAlbum(id);
 
     Object.assign(album, albumData);
 
     return album;
   }
 
-  deleteAlbum(id: string): AlbumEntity {
+  async deleteAlbum(id: string): Promise<AlbumEntity> {
     const index = this.albums.findIndex((album) => album.id === id);
     const album = this.albums.splice(index, 1)[0];
 
     return album;
   }
 
-  getFavorites(): FavoritesEntity {
+  async getFavorites(): Promise<FavoritesEntity> {
     return this.favorites;
   }
 
-  addTrackToFavorites(trackId: string): void {
+  async addTrackToFavorites(trackId: string): Promise<void> {
     const existingTrack = this.favorites.tracks.find((id) => id === trackId);
     if (!existingTrack) this.favorites.tracks.push(trackId);
   }
 
-  deleteTrackFromFavorites(trackId: string): void {
+  async deleteTrackFromFavorites(trackId: string): Promise<void> {
     const index = this.favorites.tracks.findIndex((id) => id === trackId);
     if (index !== -1) this.favorites.tracks.splice(index, 1);
   }
 
-  addAlbumToFavorites(albumId: string): void {
+  async addAlbumToFavorites(albumId: string): Promise<void> {
     const existingAlbum = this.favorites.albums.find((id) => id === albumId);
     if (!existingAlbum) this.favorites.albums.push(albumId);
   }
 
-  deleteAlbumFromFavorites(albumId: string): void {
+  async deleteAlbumFromFavorites(albumId: string): Promise<void> {
     const index = this.favorites.albums.findIndex((id) => id === albumId);
     if (index !== -1) this.favorites.albums.splice(index, 1);
   }
 
-  addArtistToFavorites(artistId: string): void {
+  async addArtistToFavorites(artistId: string): Promise<void> {
     const existingArtist = this.favorites.artists.find((id) => id === artistId);
     if (!existingArtist) this.favorites.artists.push(artistId);
   }
 
-  deleteArtistFromFavorites(artistId: string): void {
+  async deleteArtistFromFavorites(artistId: string): Promise<void> {
     const index = this.favorites.artists.findIndex((id) => id === artistId);
     if (index !== -1) this.favorites.artists.splice(index, 1);
   }
