@@ -1,5 +1,5 @@
 import {
-  ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,7 +8,6 @@ import { Database } from 'src/database/database.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { omit } from 'src/common/helpers/omit';
-import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UserService {
@@ -47,7 +46,10 @@ export class UserService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    // return await this.db.updateUser(id, updateUserDto);
+    if (targetUser.password !== updateUserDto.oldPassword) {
+      throw new ForbiddenException('Previous password is incorrect');
+    }
+
     return omit(await this.db.updateUser(id, updateUserDto), ['password']);
   }
 
