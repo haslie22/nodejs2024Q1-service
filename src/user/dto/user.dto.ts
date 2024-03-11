@@ -1,9 +1,34 @@
-// TODO: check if can be replaced with entity
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserDto {
-  id: string; // uuid v4
+  @ApiProperty({
+    description: 'The unique identifier of the user (UUID v4)',
+    type: String,
+    format: 'uuid',
+  })
+  id: string;
+
+  @ApiProperty({
+    description: 'The login name of the user',
+    type: String,
+  })
   login: string;
-  version: number; // integer number, increments on update
-  createdAt: number; // timestamp of creation
-  updatedAt: number; // timestamp of last update
+
+  @ApiProperty({
+    description: 'The version of the user entity, incremented on update',
+    type: Number,
+  })
+  version: number;
+
+  @ApiProperty({
+    description: 'The timestamp of creation of the user entity',
+    type: Number,
+  })
+  createdAt: number;
+
+  @ApiProperty({
+    description: 'The timestamp of last update of the user entity',
+    type: Number,
+  })
+  updatedAt: number;
 }
