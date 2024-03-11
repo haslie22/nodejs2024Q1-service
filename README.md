@@ -1,72 +1,83 @@
-# Home Library Service
+# :books: Home Library Service
 
-## Prerequisites
+## :clipboard: Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
-## Downloading
+## :hammer_and_wrench: Installation and Set Up
 
-```
-git clone {repository URL}
+:one: Clone this repo:
+
+```bash
+git clone https://github.com/haslie22/nodejs2024Q1-service.git
 ```
 
-## Installing NPM modules
+:two: Change branch:
 
+```bash
+git switch dev-part1
 ```
+
+:three: Install NPM modules:
+
+```bash
 npm install
 ```
 
-## Adding environment variables
+:four: Rename `.env.example` file to `.env`:
 
-Rename `.env.example` file to `.env`.
-
-## Running application
-
+```bash
+cp .env.example .env
 ```
+
+## :rocket: Running the Application
+
+Run the application:
+
+```bash
 npm start
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+Application starts on the port indicated in the `.env` file or dafault (**4000**) port.
 
-## Testing
+:warning: If you encounter `Already in use` error, please change port in `.env` file or stop the application that runs on the neccessary port.
 
-After application running open new terminal and enter:
+## :test_tube: Testing
 
-To run all tests without authorization
+To run all tests without authorization:
 
-```
+```bash
 npm run test
 ```
 
-To run only one of all test suites
+### :memo: Documentation
 
-```
-npm run test -- <path to suite>
-```
+After starting the app on port (4000 as default) you can open
+in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 
-To run all test with authorization
+For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
-```
-npm run test:auth
-```
+### :cherry_blossom: Auto-fix and format
 
-To run only specific test suite with authorization
+To check existing linting and formatting:
 
-```
-npm run test:auth -- <path to suite>
-```
-
-### Auto-fix and format
-
-```
+```bash
 npm run lint
 ```
 
-```
+```bash
 npm run format
+```
+
+To fix linting and formatting:
+
+```bash
+npm run lint:fix
+```
+
+```bash
+npm run format:fix
 ```
 
 ### Debugging in VSCode

@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { ApiProperty } from '@nestjs/swagger'; // Import Swagger decorators
+import { ApiProperty } from '@nestjs/swagger';
 
 import { CreateTrackDto } from './create-track.dto';
 
