@@ -84,6 +84,10 @@ export class Database {
     return this.tracks.filter((track) => track.artistId === id);
   }
 
+  async getTracksByAlbum(id: string): Promise<TrackEntity[]> {
+    return this.tracks.filter((track) => track.albumId === id);
+  }
+
   async getTrack(id: string): Promise<TrackEntity> {
     return this.tracks.find((track) => track.id === id);
   }

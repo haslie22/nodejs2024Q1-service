@@ -26,14 +26,14 @@ export class ArtistService {
     return await this.db.createArtist(artist);
   }
 
-  async update(id: string, updateArtistkDto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
     const targetArtist = await this.db.getArtist(id);
 
     if (!targetArtist) {
-      throw new NotFoundException(`artist with id ${id} not found`);
+      throw new NotFoundException(`Artist with id ${id} not found`);
     }
 
-    return await this.db.updateArtist(id, updateArtistkDto);
+    return await this.db.updateArtist(id, updateArtistDto);
   }
 
   async delete(id: string) {
