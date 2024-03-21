@@ -14,7 +14,9 @@ export class UserService {
   constructor(private db: Database) {}
 
   async getAll() {
-    return await this.db.getUsers();
+    const users = await this.db.getUsers();
+
+    return users.map((user) => omit(user, ['password']));
   }
 
   async getOne(id: string) {
@@ -24,7 +26,7 @@ export class UserService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    return targetUser;
+    return omit(targetUser, ['password']);
   }
 
   async create(user: CreateUserDto) {
