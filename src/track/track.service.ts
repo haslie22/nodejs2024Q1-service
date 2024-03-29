@@ -1,19 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
-import { Database } from 'src/database/database.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaClientErrorCode } from 'src/common/consts/consts';
+
 @Injectable()
 export class TrackService {
-  constructor(private db: Database) {}
+  constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    return await this.db.getTracks();
+    return await this.prisma.track.findMany();
   }
 
   async getOne(id: string) {
-    const targetTrack = await this.db.getTrack(id);
+    const targetTrack = await this.prisma.track.findUnique({ where: { id } });
 
     if (!targetTrack) {
       throw new NotFoundException(`Track with id ${id} not found`);
@@ -23,26 +26,37 @@ export class TrackService {
   }
 
   async create(track: CreateTrackDto) {
-    return await this.db.createTrack(track);
+    return await this.prisma.track.create({ data: track });
   }
 
   async update(id: string, trackData: UpdateTrackDto) {
-    const targetTrack = await this.db.getTrack(id);
-
-    if (!targetTrack) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+    try {
+      return await this.prisma.track.update({
+        where: { id },
+        data: trackData,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PrismaClientErrorCode.RecordNotFound
+      ) {
+        throw new NotFoundException(`Track with id ${id} not found`);
+      }
+      throw error;
     }
-
-    return await this.db.updateTrack(id, trackData);
   }
 
   async delete(id: string) {
-    const targetTrack = await this.db.getTrack(id);
-
-    if (!targetTrack) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+    try {
+      return await this.prisma.track.delete({ where: { id } });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PrismaClientErrorCode.RecordNotFound
+      ) {
+        throw new NotFoundException(`Track with id ${id} not found`);
+      }
+      throw error;
     }
-
-    return await this.db.deleteTrack(id);
   }
 }
