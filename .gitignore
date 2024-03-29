@@ -37,4 +37,4 @@ lerna-debug.log*
 # Dotenv environment variables file
 .env
 .env.test
-db/
+db/password.txt
