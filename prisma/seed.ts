@@ -31,6 +31,7 @@ async function main() {
         version: 1,
       },
     ],
+    skipDuplicates: true,
   });
 
   await prisma.artist.createMany({
@@ -61,6 +62,7 @@ async function main() {
         grammy: true,
       },
     ],
+    skipDuplicates: true,
   });
 
   await prisma.album.createMany({
@@ -96,41 +98,69 @@ async function main() {
         artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba506',
       },
     ],
+    skipDuplicates: true,
   });
 
   await prisma.track.createMany({
     data: [
       {
+        id: '7c9c4987-eb82-4502-a164-30ae527f479e',
         name: 'Shake It Off',
         artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba502',
         albumId: 'd7627b6b-c317-47c5-9055-9a511f12d446',
         duration: 219,
       },
       {
+        id: '7c9c4987-eb82-4502-a164-30ae527f47a0',
         name: 'Shape of You',
         artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba503',
         albumId: 'd7627b6b-c317-47c5-9055-9a511f12d447',
         duration: 233,
       },
       {
+        id: '7c9c4987-eb82-4502-a164-30ae527f47a1',
         name: 'Formation',
         artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba504',
         albumId: 'd7627b6b-c317-47c5-9055-9a511f12d448',
         duration: 226,
       },
       {
+        id: '7c9c4987-eb82-4502-a164-30ae527f47a2',
         name: 'One Dance',
         artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba505',
         albumId: 'd7627b6b-c317-47c5-9055-9a511f12d449',
         duration: 173,
       },
       {
+        id: '7c9c4987-eb82-4502-a164-30ae527f47a3',
         name: 'Rolling in the Deep',
         artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba506',
         albumId: 'd7627b6b-c317-47c5-9055-9a511f12d450',
         duration: 228,
       },
     ],
+    skipDuplicates: true,
+  });
+
+  await prisma.artistInFavorites.createMany({
+    data: {
+      artistId: '8908ad0e-0573-41a6-9dcc-d89dedbba502',
+    },
+    skipDuplicates: true,
+  });
+
+  await prisma.albumInFavorites.createMany({
+    data: {
+      albumId: 'd7627b6b-c317-47c5-9055-9a511f12d446',
+    },
+    skipDuplicates: true,
+  });
+
+  await prisma.trackInFavorites.createMany({
+    data: {
+      trackId: '7c9c4987-eb82-4502-a164-30ae527f47a0',
+    },
+    skipDuplicates: true,
   });
 }
 

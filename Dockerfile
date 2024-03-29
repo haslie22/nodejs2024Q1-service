@@ -22,7 +22,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 
 COPY . .
 
-RUN npm run build
+RUN npm run build && npx prisma generate
 
 FROM base as final
 
@@ -32,8 +32,12 @@ USER node
 
 COPY package.json .
 COPY --from=deps /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/prisma ./prisma
 
 EXPOSE 4000
 
-CMD npm run start:prod
+CMD sh -c "npx prisma migrate deploy &&\
+    npm run start:prod:seed &&\
+    npm run start:prod"
