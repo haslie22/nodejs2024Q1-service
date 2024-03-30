@@ -14,7 +14,7 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - 4000:4000
+      - ${PORT}:${PORT}
     restart: on-failure
     depends_on:
       db:
@@ -28,13 +28,10 @@ services:
     user: postgres
     env_file:
       - .env
-    environment:
-      - POSTGRES_DB=home-library
-      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
     expose:
-      - 5432
+      - ${POSTGRES_PORT}
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     command:
       - "-c"
       - "logging_collector=on"
@@ -47,8 +44,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    secrets:
-      - db-password
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
@@ -60,7 +55,3 @@ volumes:
 networks:
   custom-network:
     driver: bridge
-
-secrets:
-  db-password:
-    file: db/password.txt
