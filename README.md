@@ -23,7 +23,13 @@ git clone https://github.com/haslie22/nodejs2024Q1-service.git
 git switch dev-part2
 ```
 
-:three: Rename `.env.example` file to `.env`:
+:three: Install NPM modules:
+
+```bash
+npm install
+```
+
+:four: Rename `.env.example` file to `.env`:
 
 ```bash
 cp .env.example .env
