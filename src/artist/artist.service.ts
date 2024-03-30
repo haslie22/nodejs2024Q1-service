@@ -48,7 +48,7 @@ export class ArtistService {
 
   async delete(id: string) {
     try {
-      return await this.prisma.album.delete({ where: { id } });
+      return await this.prisma.artist.delete({ where: { id } });
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

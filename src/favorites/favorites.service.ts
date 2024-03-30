@@ -9,31 +9,34 @@ export class FavoritesService {
   constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    const [artists, albums, tracks] = await Promise.all([
+    const [dbArtists, dbAlbums, dbTracks] = await Promise.all([
       this.prisma.artistInFavorites.findMany({ include: { artist: true } }),
       this.prisma.albumInFavorites.findMany({ include: { album: true } }),
       this.prisma.trackInFavorites.findMany({ include: { track: true } }),
     ]);
+
+    const artists = dbArtists.map((artist) => artist.artist);
+    const albums = dbAlbums.map((album) => album.album);
+    const tracks = dbTracks.map((track) => track.track);
 
     return { artists, albums, tracks };
   }
 
   async addTrack(id: string) {
     try {
-      return await this.prisma.trackInFavorites.create({
+      return await this.prisma.trackInFavorites.createMany({
         data: { trackId: id },
+        skipDuplicates: true,
       });
     } catch (error) {
-      console.log(error);
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === PrismaClientErrorCode.RecordNotFound
+        error.code === PrismaClientErrorCode.ForeignKeyViolation
       ) {
         throw new UnprocessableEntityException(
           `Track with id ${id} does not exist`,
         );
-      }
-      throw error;
+      } else throw error;
     }
   }
 
@@ -43,19 +46,19 @@ export class FavoritesService {
 
   async addAlbum(id: string) {
     try {
-      return await this.prisma.albumInFavorites.create({
+      return await this.prisma.albumInFavorites.createMany({
         data: { albumId: id },
+        skipDuplicates: true,
       });
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === PrismaClientErrorCode.RecordNotFound
+        error.code === PrismaClientErrorCode.ForeignKeyViolation
       ) {
         throw new UnprocessableEntityException(
           `Album with id ${id} does not exist`,
         );
-      }
-      throw error;
+      } else throw error;
     }
   }
 
@@ -65,19 +68,19 @@ export class FavoritesService {
 
   async addArtist(id: string) {
     try {
-      return await this.prisma.artistInFavorites.create({
+      return await this.prisma.artistInFavorites.createMany({
         data: { artistId: id },
+        skipDuplicates: true,
       });
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === PrismaClientErrorCode.RecordNotFound
+        error.code === PrismaClientErrorCode.ForeignKeyViolation
       ) {
         throw new UnprocessableEntityException(
           `Artist with id ${id} does not exist`,
         );
-      }
-      throw error;
+      } else throw error;
     }
   }
 

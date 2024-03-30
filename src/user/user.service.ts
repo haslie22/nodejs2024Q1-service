@@ -11,6 +11,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientErrorCode } from 'src/common/consts/consts';
 import { prismaExclude } from 'src/common/helpers/prismaExclude';
+import { prismaModifyUser } from 'src/common/helpers/prismaModifyUser';
 
 @Injectable()
 export class UserService {
@@ -21,7 +22,7 @@ export class UserService {
       select: prismaExclude('User', ['password']),
     });
 
-    return users;
+    return users.map((user) => prismaModifyUser(user));
   }
 
   async getOne(id: string) {
@@ -34,7 +35,7 @@ export class UserService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    return targetUser;
+    return prismaModifyUser(targetUser);
   }
 
   async create(user: CreateUserDto) {
@@ -43,7 +44,7 @@ export class UserService {
       select: prismaExclude('User', ['password']),
     });
 
-    return newUser;
+    return prismaModifyUser(newUser);
   }
 
   async update(id: string, userData: UpdateUserDto) {
@@ -66,7 +67,7 @@ export class UserService {
       select: prismaExclude('User', ['password']),
     });
 
-    return updatedUser;
+    return prismaModifyUser(updatedUser);
   }
 
   async delete(id: string) {
