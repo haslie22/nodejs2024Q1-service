@@ -6,6 +6,10 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "docker:start": "docker compose build && docker compose watch",
+    "docker:scan": "docker scout cves haslie22/home-library-service:latest",
+    "docker:recommendations": "docker scout recommendations haslie22/home-library-service:latest",
+    "docker:full-analysis": "npm run scout:scan && npm run scout:recommendations",
     "format": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -20,10 +24,7 @@
     "test:refresh": "cross-env TEST_MODE=auth jest --testPathPattern refresh.e2e.spec.ts --noStackTrace --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "scout:scan": "docker scout cves haslie22/home-library-service:latest",
-    "scout:recommendations": "docker scout recommendations haslie22/home-library-service:latest",
-    "scout:full-analysis": "npm run scout:scan && npm run scout:recommendations"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.4",

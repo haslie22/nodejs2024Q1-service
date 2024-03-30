@@ -1,9 +1,13 @@
-# :books: Home Library Service
+# :books: Home Library Service [<img src="https://img.shields.io/badge/DockerHub-latest-blue.svg?logo=LOGO">](https://hub.docker.com/repository/docker/haslie22/home-library-service/general)
 
 ## :clipboard: Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+| Software    | Link                                                                    |
+| ----------- | ----------------------------------------------------------------------- |
+| Git         | [download and install](https://git-scm.com/downloads)                   |
+| Node.js/npm | [download and install](https://nodejs.org/en/download/)                 |
+| Docker      | [download and install](https://www.docker.com/products/docker-desktop/) |
+| Docker Hub  | [create an account](https://hub.docker.com/)                            |
 
 ## :hammer_and_wrench: Installation and Set Up
 
@@ -16,16 +20,10 @@ git clone https://github.com/haslie22/nodejs2024Q1-service.git
 :two: Change branch:
 
 ```bash
-git switch dev-part1
+git switch dev-part2
 ```
 
-:three: Install NPM modules:
-
-```bash
-npm install
-```
-
-:four: Rename `.env.example` file to `.env`:
+:three: Rename `.env.example` file to `.env`:
 
 ```bash
 cp .env.example .env
@@ -33,15 +31,37 @@ cp .env.example .env
 
 ## :rocket: Running the Application
 
-Run the application:
+Run the multi-container application:
 
 ```bash
-npm start
+npm run docker:start
 ```
 
-Application starts on the port indicated in the `.env` file or dafault (**4000**) port.
+Application starts on the port indicated in the `.env` file or default (**4000**) port.
 
-:warning: If you encounter `Already in use` error, please change port in `.env` file or stop the application that runs on the neccessary port.
+Postgres database starts on the indicated in the `.env` file (**5432**) port.
+
+:warning: If you encounter `Already in use` error, please stop processes that are using the indicated ports.
+
+## :package: Docker features
+
+To perform a vulnerability scan and receive recommendations from Docker Scout, execute the following command:
+
+```bash
+npm run docker:full-analysis
+```
+
+:link: To view the repository containing the app image on Docker Hub, please visit [this link](https://hub.docker.com/repository/docker/haslie22/home-library-service/general).
+
+## :card_file_box: Prisma features
+
+To access the GUI of the database, you can initiate it by running the following command:
+
+```bash
+npx prisma studio
+```
+
+:link: After executing the command, you can open the GUI in your browser by typing http://localhost:5555/.
 
 ## :test_tube: Testing
 
@@ -53,10 +73,7 @@ npm run test
 
 ### :memo: Documentation
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+:link: Once the app is running, you can easily access the OpenAPI documentation by typing http://localhost:4000/doc/ into your browser's address bar.
 
 ### :cherry_blossom: Auto-fix and format
 
@@ -84,4 +101,4 @@ npm run format:fix
 
 Press <kbd>F5</kbd> to debug.
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+:link: For more information, please check [this link](https://code.visualstudio.com/docs/editor/debugging).
