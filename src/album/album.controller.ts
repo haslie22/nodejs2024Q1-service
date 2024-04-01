@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -22,8 +23,11 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+
 @ApiTags('Album')
 @Controller('album')
+@UseGuards(JwtAuthGuard)
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 

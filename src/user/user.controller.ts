@@ -11,6 +11,7 @@ import {
   Put,
   UseInterceptors,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -28,8 +29,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
 @ApiTags('User')
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}

@@ -9,6 +9,7 @@ import { TrackModule } from '../track/track.module';
 import { AlbumModule } from '../album/album.module';
 import { FavoritesModule } from '../favorites/favorites.module';
 import { JsonMiddleware } from 'src/common/middleware/json.middleware';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JsonMiddleware } from 'src/common/middleware/json.middleware';
     TrackModule,
     AlbumModule,
     FavoritesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
