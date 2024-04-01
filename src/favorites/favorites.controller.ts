@@ -19,7 +19,7 @@ import {
 
 import { FavoritesService } from './favorites.service';
 
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Favorites')
 @Controller('favs')

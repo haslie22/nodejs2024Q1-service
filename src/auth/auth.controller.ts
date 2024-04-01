@@ -3,10 +3,13 @@ import {
   Controller,
   HttpCode,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -16,6 +19,8 @@ import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { AuthEntity } from './auth.entity';
 import { UserService } from 'src/user/user.service';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -42,8 +47,32 @@ export class AuthController {
   }
 
   @Post('signup')
+  @ApiOperation({
+    summary: 'Sign up a user',
+    description: 'Sign up a user with login and password.',
+  })
+  @ApiCreatedResponse({
+    description: 'User signed up successfully',
+    type: AuthEntity,
+  })
+  @ApiBadRequestResponse({ description: 'Validation failed' })
   @HttpCode(201)
   async signup(@Body(new ValidationPipe()) { login, password }: LoginDto) {
     return this.userService.create({ login, password });
+  }
+
+  @Post('refresh')
+  @UseGuards(RefreshTokenGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get new tokens',
+    description: 'Get new tokens with refresh token.',
+  })
+  @ApiCreatedResponse({
+    description: 'User refreshed his tokens successfully',
+    type: AuthEntity,
+  })
+  async refresh(@Body(new ValidationPipe()) refreshToken: RefreshTokenDto) {
+    return this.authService.refresh(refreshToken);
   }
 }

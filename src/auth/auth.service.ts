@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { PrismaService } from './../prisma/prisma.service';
 import { AuthEntity } from './auth.entity';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,8 +26,33 @@ export class AuthService {
       throw new ForbiddenException('Invalid password');
     }
 
+    return this.getTokens(user.id, user.login);
+  }
+
+  async refresh(token: RefreshTokenDto): Promise<AuthEntity> {
+    const { userId, login } = this.jwtService.verify(token.refreshToken, {
+      secret: process.env.JWT_SECRET_REFRESH_KEY,
+    });
+
+    return this.getTokens(userId, login);
+  }
+
+  async getTokens(userId: string, login: string) {
+    const payload = { userId, login };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET_KEY,
+      expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h',
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET_REFRESH_KEY,
+      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h',
+    });
+
     return {
-      accessToken: this.jwtService.sign({ userId: user.id }),
+      accessToken,
+      refreshToken,
     };
   }
 }
