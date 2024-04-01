@@ -18,6 +18,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { ArtistService } from './artist.service';
@@ -29,6 +30,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @ApiTags('Artist')
 @Controller('artist')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 

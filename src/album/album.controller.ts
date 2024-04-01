@@ -18,6 +18,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -28,6 +29,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @ApiTags('Album')
 @Controller('album')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 

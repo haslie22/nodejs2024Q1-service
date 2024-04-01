@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import {
   ForbiddenException,
   Injectable,
@@ -12,6 +13,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientErrorCode } from 'src/common/consts/consts';
 import { prismaExclude } from 'src/common/helpers/prismaExclude';
 import { prismaModifyUser } from 'src/common/helpers/prismaModifyUser';
+import { hashPassword } from 'src/common/helpers/hashPassword';
 
 @Injectable()
 export class UserService {
@@ -39,8 +41,12 @@ export class UserService {
   }
 
   async create(user: CreateUserDto) {
+    const hashedPassword = await hashPassword(user.password);
     const newUser = await this.prisma.user.create({
-      data: user,
+      data: {
+        ...user,
+        password: hashedPassword,
+      },
       select: prismaExclude('User', ['password']),
     });
 
@@ -54,14 +60,21 @@ export class UserService {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    if (targetUser.password !== userData.oldPassword) {
+    const isPasswordCorrect = await bcrypt.compare(
+      targetUser.password,
+      userData.oldPassword,
+    );
+
+    if (isPasswordCorrect) {
       throw new ForbiddenException('Previous password is incorrect');
     }
+
+    const hashedPassword = await hashPassword(userData.newPassword);
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: {
-        password: userData.newPassword,
+        password: hashedPassword,
         version: { increment: 1 },
       },
       select: prismaExclude('User', ['password']),

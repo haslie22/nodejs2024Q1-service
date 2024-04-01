@@ -18,6 +18,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { TrackService } from './track.service';
@@ -29,6 +30,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @ApiTags('Track')
 @Controller('track')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 

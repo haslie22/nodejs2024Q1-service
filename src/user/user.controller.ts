@@ -21,6 +21,7 @@ import {
   ApiBadRequestResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClassSerializerInterceptor } from '@nestjs/common';
 
@@ -34,6 +35,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @ApiTags('User')
 @Controller('user')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
