@@ -1,33 +1,41 @@
 import { PrismaClient } from '@prisma/client';
 
+import { hashPassword } from 'src/common/helpers/hashPassword';
+
 const prisma = new PrismaClient();
 
 async function main() {
+  const passwordJohn = await hashPassword('password123');
+  const passwordJane = await hashPassword('securePassword');
+  const passwordMichael = await hashPassword('kingofpop');
+  const passwordElvis = await hashPassword('theking');
+  const passwordLady = await hashPassword('littlemonsters');
+
   await prisma.user.createMany({
     data: [
       {
         login: 'john_doe',
-        password: 'password123',
+        password: passwordJohn,
         version: 1,
       },
       {
         login: 'jane_smith',
-        password: 'securePassword',
+        password: passwordJane,
         version: 1,
       },
       {
         login: 'michael_jackson',
-        password: 'kingofpop',
+        password: passwordMichael,
         version: 1,
       },
       {
         login: 'elvis_presley',
-        password: 'theking',
+        password: passwordElvis,
         version: 1,
       },
       {
         login: 'lady_gaga',
-        password: 'littlemonsters',
+        password: passwordLady,
         version: 1,
       },
     ],
