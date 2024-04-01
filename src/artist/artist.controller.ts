@@ -41,7 +41,7 @@ export class ArtistController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Artists found' })
   async getAll() {
-    return await this.artistService.getAll();
+    return this.artistService.getAll();
   }
 
   @Get(':id')
@@ -68,7 +68,7 @@ export class ArtistController {
     )
     id: string,
   ) {
-    return await this.artistService.getOne(id);
+    return this.artistService.getOne(id);
   }
 
   @Post()
@@ -82,7 +82,7 @@ export class ArtistController {
     description: 'Artist created',
   })
   async create(@Body(new ValidationPipe()) createArtistDto: CreateArtistDto) {
-    return await this.artistService.create(createArtistDto);
+    return this.artistService.create(createArtistDto);
   }
 
   @Put(':id')
@@ -111,7 +111,7 @@ export class ArtistController {
     id: string,
     @Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto,
   ) {
-    return await this.artistService.update(id, updateArtistDto);
+    return this.artistService.update(id, updateArtistDto);
   }
 
   @Delete(':id')

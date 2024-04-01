@@ -38,7 +38,7 @@ export class FavoritesController {
     description: 'Favorites found',
   })
   async getAll() {
-    return await this.favoritesService.getAll();
+    return this.favoritesService.getAll();
   }
 
   @Post('track/:id')
@@ -66,7 +66,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    return await this.favoritesService.addTrack(id);
+    return this.favoritesService.addTrack(id);
   }
 
   @Delete('track/:id')
@@ -91,7 +91,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    return await this.favoritesService.deleteTrack(id);
+    return this.favoritesService.deleteTrack(id);
   }
 
   @Post('album/:id')
@@ -119,7 +119,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    return await this.favoritesService.addAlbum(id);
+    return this.favoritesService.addAlbum(id);
   }
 
   @Delete('album/:id')
@@ -147,7 +147,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    return await this.favoritesService.deleteAlbum(id);
+    return this.favoritesService.deleteAlbum(id);
   }
 
   @Post('artist/:id')
@@ -175,7 +175,7 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    return await this.favoritesService.addArtist(id);
+    return this.favoritesService.addArtist(id);
   }
 
   @Delete('artist/:id')
@@ -203,6 +203,6 @@ export class FavoritesController {
     )
     id: string,
   ) {
-    return await this.favoritesService.deleteArtist(id);
+    return this.favoritesService.deleteArtist(id);
   }
 }

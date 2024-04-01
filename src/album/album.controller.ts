@@ -43,7 +43,7 @@ export class AlbumController {
     description: 'Albums found',
   })
   async getAll() {
-    return await this.albumService.getAll();
+    return this.albumService.getAll();
   }
 
   @Get(':id')
@@ -67,7 +67,7 @@ export class AlbumController {
     )
     id: string,
   ) {
-    return await this.albumService.getOne(id);
+    return this.albumService.getOne(id);
   }
 
   @Post()
@@ -81,7 +81,7 @@ export class AlbumController {
     description: 'Album created',
   })
   async create(@Body(new ValidationPipe()) createAlbumDto: CreateAlbumDto) {
-    return await this.albumService.create(createAlbumDto);
+    return this.albumService.create(createAlbumDto);
   }
 
   @Put(':id')
@@ -107,7 +107,7 @@ export class AlbumController {
     id: string,
     @Body(new ValidationPipe()) updateAlbumDto: UpdateAlbumDto,
   ) {
-    return await this.albumService.update(id, updateAlbumDto);
+    return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')

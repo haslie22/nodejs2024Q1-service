@@ -1,8 +1,5 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { PrismaService } from './../prisma/prisma.service';
@@ -17,16 +14,15 @@ export class AuthService {
 
   async login(login: string, password: string): Promise<AuthEntity> {
     const user = await this.prisma.user.findUnique({ where: { login } });
-    console.log('🚀 ~ AuthService ~ login ~ user:', user);
 
     if (!user) {
-      throw new NotFoundException(`No user found for login: ${login}`);
+      throw new ForbiddenException(`No user found for login: ${login}`);
     }
 
-    const isPasswordValid = user.password === password;
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid password');
+    if (!isPasswordCorrect) {
+      throw new ForbiddenException('Invalid password');
     }
 
     return {

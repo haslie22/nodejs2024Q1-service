@@ -50,7 +50,7 @@ export class UserController {
     type: [UserDto],
   })
   async getAll(): Promise<UserDto[]> {
-    return await this.userService.getAll();
+    return this.userService.getAll();
   }
 
   @Get(':id')
@@ -75,7 +75,7 @@ export class UserController {
     )
     id: string,
   ): Promise<UserDto> {
-    return await this.userService.getOne(id);
+    return this.userService.getOne(id);
   }
 
   @Post()
@@ -91,7 +91,7 @@ export class UserController {
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserDto> {
-    return await this.userService.create(createUserDto);
+    return this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -118,7 +118,7 @@ export class UserController {
     id: string,
     @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
   ): Promise<UserDto> {
-    return await this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')

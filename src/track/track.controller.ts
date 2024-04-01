@@ -44,7 +44,7 @@ export class TrackController {
     description: 'Tracks found',
   })
   async getAll() {
-    return await this.trackService.getAll();
+    return this.trackService.getAll();
   }
 
   @Get(':id')
@@ -71,7 +71,7 @@ export class TrackController {
     )
     id: string,
   ) {
-    return await this.trackService.getOne(id);
+    return this.trackService.getOne(id);
   }
 
   @Post()
@@ -85,7 +85,7 @@ export class TrackController {
     description: 'Track created',
   })
   async create(@Body(new ValidationPipe()) createTrackDto: CreateTrackDto) {
-    return await this.trackService.create(createTrackDto);
+    return this.trackService.create(createTrackDto);
   }
 
   @Put(':id')
@@ -114,7 +114,7 @@ export class TrackController {
     id: string,
     @Body(new ValidationPipe()) updateTrackDto: UpdateTrackDto,
   ) {
-    return await this.trackService.update(id, updateTrackDto);
+    return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')

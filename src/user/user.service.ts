@@ -42,8 +42,12 @@ export class UserService {
 
   async create(user: CreateUserDto) {
     const hashedPassword = await hashPassword(user.password);
-    const newUser = await this.prisma.user.create({
-      data: {
+    const newUser = await this.prisma.user.upsert({
+      where: { login: user.login },
+      update: {
+        password: hashedPassword,
+      },
+      create: {
         ...user,
         password: hashedPassword,
       },
@@ -61,11 +65,11 @@ export class UserService {
     }
 
     const isPasswordCorrect = await bcrypt.compare(
-      targetUser.password,
       userData.oldPassword,
+      targetUser.password,
     );
 
-    if (isPasswordCorrect) {
+    if (!isPasswordCorrect) {
       throw new ForbiddenException('Previous password is incorrect');
     }
 
