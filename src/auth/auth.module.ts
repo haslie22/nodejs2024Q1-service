@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -13,9 +14,15 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
   imports: [
     PrismaModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h' },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('jwt').accessSecret,
+        signOptions: {
+          expiresIn: configService.get('jwt').accessTokenExpiration,
+        },
+      }),
     }),
     UserModule,
   ],

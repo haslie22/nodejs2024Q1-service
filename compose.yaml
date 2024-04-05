@@ -14,7 +14,7 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - ${PORT}:${PORT}
+      - ${APP_PORT}:${APP_PORT}
     restart: on-failure
     depends_on:
       db:
