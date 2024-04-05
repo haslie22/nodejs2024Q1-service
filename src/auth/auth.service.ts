@@ -47,7 +47,6 @@ export class AuthService {
     await this.prisma.token.delete({ where: { userId: targetUser.id } });
 
     const tokens = await this.getTokens(targetUser.id, targetUser.login);
-    console.log('🚀 ~ AuthService ~ refresh ~ tokens:', tokens);
     await this.updateRefreshToken(targetUser.id, tokens.refreshToken);
 
     return tokens;

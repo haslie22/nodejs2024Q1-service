@@ -120,7 +120,7 @@ export class AlbumController {
     type: String,
     description: 'The UUID v4 of the album',
   })
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
     description: 'Album deleted',
