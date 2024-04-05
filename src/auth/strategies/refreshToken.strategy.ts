@@ -1,23 +1,47 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { Injectable } from '@nestjs/common';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
   'jwt-refresh',
 ) {
-  constructor() {
+  constructor(
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET_REFRESH_KEY,
+      secretOrKey: configService.get('jwt').refreshSecret,
       passReqToCallback: true,
     });
   }
 
-  validate(req: Request, payload: any) {
+  async validate(req: Request) {
     const refreshToken = req.get('Authorization').replace('Bearer', '').trim();
-    return { ...payload, refreshToken };
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is not provided');
+    }
+
+    try {
+      const user = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('jwt').refreshSecret,
+      });
+      req.user = user;
+    } catch {
+      throw new ForbiddenException('Refresh token expired');
+    }
+
+    return true;
   }
 }

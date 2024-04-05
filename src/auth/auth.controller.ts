@@ -3,7 +3,7 @@ import {
   Controller,
   HttpCode,
   Post,
-  UseGuards,
+  UnauthorizedException,
   ValidationPipe,
 } from '@nestjs/common';
 import {
@@ -20,7 +20,6 @@ import { AuthService } from './auth.service';
 import { AuthEntity } from './auth.entity';
 import { UserService } from 'src/user/user.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
-import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -62,7 +61,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(RefreshTokenGuard)
+  @HttpCode(200)
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get new tokens',
@@ -72,7 +71,14 @@ export class AuthController {
     description: 'User refreshed his tokens successfully',
     type: AuthEntity,
   })
-  async refresh(@Body(new ValidationPipe()) refreshToken: RefreshTokenDto) {
+  async refresh(
+    @Body(new ValidationPipe({ errorHttpStatusCode: 401 }))
+    refreshToken: RefreshTokenDto,
+  ) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Missing refresh token in request body');
+    }
+
     return this.authService.refresh(refreshToken);
   }
 }
