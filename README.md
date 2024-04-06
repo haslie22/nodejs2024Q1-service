@@ -47,7 +47,7 @@ Application starts on the port indicated in the `.env` file or default (**4000**
 
 Postgres database starts on the indicated in the `.env` file (**5432**) port.
 
-:warning: If you encounter `Already in use` error, please stop processes that are using the indicated ports.
+:warning: If you encounter **`Already in use`** error, please stop processes that are using the indicated ports.
 
 ## :package: Docker features
 
@@ -69,13 +69,72 @@ npx prisma studio
 
 :link: After executing the command, you can open the GUI in your browser by typing http://localhost:5555/.
 
+## :vertical_traffic_light: Logger and Exception Filter features
+
+Logs are stored into the `volume`, so that they can be preserved between application restarts.
+
+##### To view the log files:
+
+1. Open the Docker Desktop app.
+2. Navigate to the `Volumes` tab.
+3. Click on the `nodejs2024q1-service_logs` volume.
+
+The logs are separated into different files according to their level. The name of the file consists of the log level and counter (e.g. `log-1.log`, `error-3.log`, `warn-2.log`).
+
+##### To test Logger and Exception Filter:
+
+1. Go to `main.ts` file.
+2. Find the following piece of code:
+
+```typescript
+await app.listen(APP_PORT, () => {
+  loggingService.log(`Application started on port ${APP_PORT}`);
+
+  // Uncomment the next lines to test Logger and unhandled exceptions/rejections.
+  // Get acquainted with README to get more info about logs.
+
+  // loggingService.error('Test Error');
+  // loggingService.warn('Test Warn');
+  // loggingService.log('Test Log');
+  // loggingService.verbose('Test Verbose');
+  // loggingService.debug('Test Debug');
+
+  // Promise.reject('Test UnhandledRejection');
+  // throw new Error('Test UncaughtException');
+});
+```
+
+3. Uncomment it and save the file.
+4. Wait until the container is rebuilt
+5. Check the log files according to the aforementioned instructions.
+
+**:bulb: Tip:** You can also observe how the Logger works when you run tests!
+
 ## :test_tube: Testing
+
+##### Parts 1-2
 
 To run all tests without authorization:
 
 ```bash
 npm run test
 ```
+
+##### Part 3
+
+To check authorization:
+
+```bash
+npm run test:auth
+```
+
+To check refresh token functionality:
+
+```bash
+npm run test:refresh
+```
+
+:exclamation: If the tests fail with a **`read ECONNRESET`** error, it means that the container is currently rebuilding and unavailable. Please wait a moment and try again.
 
 ### :memo: Documentation
 
