@@ -12,7 +12,7 @@ export default () => ({
     salt: +process.env.CRYPT_SALT,
   },
   log: {
-    maxFileSize: +process.env.LOG_MAX_FILE_SIZE * 10240,
+    maxFileSize: +process.env.LOG_MAX_FILE_SIZE * 1024,
     logLevel: +process.env.LOG_LEVEL,
   },
 });

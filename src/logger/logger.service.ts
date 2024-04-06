@@ -1,5 +1,6 @@
-import { join, basename, extname } from 'path';
-import { existsSync, mkdirSync, appendFile, stat, rename } from 'fs';
+import { join } from 'path';
+import { existsSync, mkdirSync, Stats } from 'fs';
+import { stat, appendFile } from 'fs/promises';
 import { Injectable, LoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
@@ -8,6 +9,15 @@ import { LogLevel } from '../common/consts/consts';
 
 @Injectable()
 export class CustomLoggerService implements LoggerService {
+  filenamesCounter = {
+    [LogLevel.FATAL]: 0,
+    [LogLevel.ERROR]: 0,
+    [LogLevel.WARN]: 0,
+    [LogLevel.LOG]: 0,
+    [LogLevel.VERBOSE]: 0,
+    [LogLevel.DEBUG]: 0,
+  };
+
   private readonly logLevel: LogLevel;
   private readonly maxFileSize: number;
   private readonly logsDirectory: string;
@@ -51,7 +61,8 @@ export class CustomLoggerService implements LoggerService {
 
   logRequest(request: Request) {
     const timestamp = new Date().toISOString().replace(/:/g, '-');
-    const logMessage = `${timestamp} [Request]: ${request.method} ${request.url}\n`;
+    const logMessage = `${timestamp} [Request]: ${request.method} ${request.url} - Query: ${JSON.stringify(request.query)} - Body: ${JSON.stringify(request.body)}\n`;
+
     this.writeToFile(LogLevel.LOG, logMessage);
   }
 
@@ -66,53 +77,50 @@ export class CustomLoggerService implements LoggerService {
     this.writeToFile(LogLevel.LOG, logMessage);
   }
 
-  private writeToFile(level: LogLevel, message: any, context?: string) {
-    if (level <= this.logLevel) {
-      const timestamp = new Date().toISOString().replace(/:/g, '-');
-      const logMessage = `${timestamp} [${LogLevel[level]}]${context ? ` [${context}]` : ''}: ${message}\n`;
-      const filename = `${LogLevel[level].toLowerCase()}-${timestamp}.log`;
-      const filePath = join(this.logsDirectory, filename);
+  private async writeToFile(level: LogLevel, message: any, context?: string) {
+    if (level > this.logLevel) return;
 
-      stat(filePath, (err, stats) => {
-        if (err && err.code === 'ENOENT') {
-          this.writeToFileDirectly(filePath, logMessage);
-        } else if (err) {
-          console.error(`Error getting file stats: ${err}`);
-        } else {
-          if (
-            stats.size + Buffer.byteLength(logMessage, 'utf8') >
-            this.maxFileSize
-          ) {
-            this.rotateLogFile(filePath, logMessage);
-          } else {
-            this.writeToFileDirectly(filePath, logMessage);
-          }
-        }
-      });
+    const timestamp = new Date().toISOString().replace(/:/g, '-');
+    const logMessage = `${timestamp} [${LogLevel[level]}]${context ? ` [${context}]` : ''}: ${message}\n`;
+
+    const fileName = this.generateFileName(level);
+    const filePath = join(this.logsDirectory, fileName);
+
+    try {
+      let stats: Stats | undefined;
+      try {
+        stats = await stat(filePath);
+      } catch (err) {
+        if (err.code !== 'ENOENT') throw err;
+      }
+
+      if (
+        stats &&
+        stats.size + Buffer.byteLength(logMessage, 'utf8') > this.maxFileSize
+      ) {
+        this.filenamesCounter[level] += 1;
+
+        const newFileName = this.generateFileName(level);
+        const newFilePath = join(this.logsDirectory, newFileName);
+
+        await this.writeToFileDirectly(newFilePath, logMessage);
+      } else {
+        await this.writeToFileDirectly(filePath, logMessage);
+      }
+    } catch (err) {
+      console.error(`Error writing to log file: ${err}`);
     }
   }
 
-  private writeToFileDirectly(filePath: string, logMessage: string) {
-    appendFile(filePath, logMessage, (err) => {
-      if (err) {
-        console.error(`Error writing to log file: ${err}`);
-      }
-    });
+  private generateFileName(level: LogLevel): string {
+    return `${LogLevel[level].toLowerCase()}-${this.filenamesCounter[level]}.log`;
   }
 
-  private rotateLogFile(filePath: string, logMessage: string) {
-    const timestamp = new Date().toISOString().replace(/:/g, '-');
-    const renamedFilePath = join(
-      this.logsDirectory,
-      `${basename(filePath, extname(filePath))}-${timestamp}${extname(filePath)}`,
-    );
-
-    rename(filePath, renamedFilePath, (err) => {
-      if (err) {
-        console.error('Error rotating log file:', err);
-      } else {
-        this.writeToFileDirectly(filePath, logMessage);
-      }
-    });
+  private async writeToFileDirectly(filePath: string, logMessage: string) {
+    try {
+      await appendFile(filePath, logMessage);
+    } catch (err) {
+      console.error(`Error writing to log file: ${err}`);
+    }
   }
 }
