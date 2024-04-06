@@ -73,7 +73,7 @@ npx prisma studio
 
 Logs are stored into the `volume`, so that they can be preserved between application restarts.
 
-##### To view the log files:
+#### To view the log files:
 
 1. Open the Docker Desktop app.
 2. Navigate to the `Volumes` tab.
@@ -81,7 +81,7 @@ Logs are stored into the `volume`, so that they can be preserved between applica
 
 The logs are separated into different files according to their level. The name of the file consists of the log level and counter (e.g. `log-1.log`, `error-3.log`, `warn-2.log`).
 
-##### To test Logger and Exception Filter:
+#### To test Logger and Exception Filter:
 
 1. Go to `main.ts` file.
 2. Find the following piece of code:
@@ -112,7 +112,7 @@ await app.listen(APP_PORT, () => {
 
 ## :test_tube: Testing
 
-##### Parts 1-2
+#### Parts 1-2
 
 To run all tests without authorization:
 
@@ -120,7 +120,7 @@ To run all tests without authorization:
 npm run test
 ```
 
-##### Part 3
+#### Part 3
 
 To check authorization:
 
