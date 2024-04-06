@@ -20,7 +20,7 @@ git clone https://github.com/haslie22/nodejs2024Q1-service.git
 :two: Change branch:
 
 ```bash
-git switch dev-part2
+git switch dev-part3
 ```
 
 :three: Install NPM modules:
