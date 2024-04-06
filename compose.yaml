@@ -19,6 +19,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - logs:/usr/src/app/logs
     networks:
       - custom-network
 
@@ -51,6 +53,7 @@ services:
 
 volumes:
   db-data:
+  logs:
 
 networks:
   custom-network:

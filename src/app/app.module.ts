@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import config from '../config/configuration';
 
@@ -10,8 +10,11 @@ import { ArtistModule } from '../artist/artist.module';
 import { TrackModule } from '../track/track.module';
 import { AlbumModule } from '../album/album.module';
 import { FavoritesModule } from '../favorites/favorites.module';
-import { JsonMiddleware } from 'src/common/middleware/json.middleware';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
+import { CustomLoggerService } from '../logger/logger.service';
+import { CustomLoggerModule } from '../logger/logger.module';
+import { JsonMiddleware } from '../common/middleware/json.middleware';
+import { CustomLoggerMiddleware } from 'src/logger/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -25,12 +28,26 @@ import { AuthModule } from 'src/auth/auth.module';
     AlbumModule,
     FavoritesModule,
     AuthModule,
+    CustomLoggerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    CustomLoggerService,
+    {
+      provide: CustomLoggerService,
+      useFactory: (configService: ConfigService) => {
+        const loggingService = new CustomLoggerService(configService);
+        return loggingService;
+      },
+      inject: [ConfigService],
+    },
+  ],
+  exports: [CustomLoggerService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(JsonMiddleware).forRoutes('*');
+    consumer.apply(CustomLoggerMiddleware).forRoutes('*');
   }
 }

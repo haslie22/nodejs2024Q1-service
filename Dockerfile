@@ -28,6 +28,10 @@ FROM base as final
 
 ENV NODE_ENV=production
 
+USER root
+
+RUN mkdir -p logs && chown node:node logs
+
 USER node
 
 COPY package.json .
