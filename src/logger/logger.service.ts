@@ -25,8 +25,8 @@ export class CustomLoggerService implements LoggerService {
     }
   }
 
-  log(message: any, context?: string) {
-    this.writeToFile(LogLevel.LOG, message, context);
+  fatal(message: any, context?: string) {
+    this.writeToFile(LogLevel.FATAL, message, context);
   }
 
   error(message: any, context?: string) {
@@ -35,6 +35,14 @@ export class CustomLoggerService implements LoggerService {
 
   warn(message: any, context?: string) {
     this.writeToFile(LogLevel.WARN, message, context);
+  }
+
+  log(message: any, context?: string) {
+    this.writeToFile(LogLevel.LOG, message, context);
+  }
+
+  verbose(message: any, context?: string) {
+    this.writeToFile(LogLevel.VERBOSE, message, context);
   }
 
   debug(message: any, context?: string) {

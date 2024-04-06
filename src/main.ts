@@ -37,7 +37,21 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);
 
-  await app.listen(APP_PORT);
+  await app.listen(APP_PORT, () => {
+    loggingService.log(`Application started on port ${APP_PORT}`);
+
+    // Uncomment the next lines to test Logger and unhandled exceptions/rejections.
+    // Get acquainted with README to get more info about logs.
+
+    // loggingService.error('Test Error');
+    // loggingService.warn('Test Warn');
+    // loggingService.log('Test Log');
+    // loggingService.verbose('Test Verbose');
+    // loggingService.debug('Test Debug');
+
+    // Promise.reject('Test UnhandledRejection');
+    // throw new Error('Test UncaughtException');
+  });
 }
 
 bootstrap();
