@@ -16,7 +16,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(
     new PrismaExceptionFilter(),
-    // new CustomExceptionFilter(loggingService),
+    new CustomExceptionFilter(loggingService),
   );
 
   process.on('uncaughtException', (err, origin) => {

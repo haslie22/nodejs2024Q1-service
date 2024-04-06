@@ -1,19 +1,20 @@
 import {
   Catch,
   ArgumentsHost,
-  HttpStatus,
   ExceptionFilter,
+  HttpException,
 } from '@nestjs/common';
 import { Response } from 'express';
+
+import { getTimestamp } from 'src/common/helpers/getTimestamp';
 import { CustomLoggerService } from 'src/logger/logger.service';
 
 @Catch()
 export class CustomExceptionFilter implements ExceptionFilter {
   constructor(private readonly logger: CustomLoggerService) {}
 
-  catch(exception: any, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
     const errorMessage = `Unexpected error during request processing: 
@@ -22,10 +23,19 @@ export class CustomExceptionFilter implements ExceptionFilter {
       Body: ${JSON.stringify(request.body)}, 
       Exception: ${exception.stack}`;
 
-    this.logger.error(errorMessage);
+    const errorResponse = {
+      statusCode: exception.getStatus(),
+      message: errorMessage,
+      path: ctx.getRequest<Request>().url,
+      timestamp: getTimestamp(),
+    };
 
-    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      message: 'Internal server error',
-    });
+    this.logger.error(errorResponse);
+    ctx.getResponse<Response>().setHeader('Skip-Logging', 'true');
+
+    ctx
+      .getResponse<Response>()
+      .status(exception.getStatus())
+      .json(errorResponse);
   }
 }
