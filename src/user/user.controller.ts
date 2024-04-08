@@ -11,6 +11,7 @@ import {
   Put,
   UseInterceptors,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import {
   ApiBadRequestResponse,
   ApiOperation,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClassSerializerInterceptor } from '@nestjs/common';
 
@@ -28,8 +30,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 @ApiTags('User')
 @Controller('user')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -44,7 +50,7 @@ export class UserController {
     type: [UserDto],
   })
   async getAll(): Promise<UserDto[]> {
-    return await this.userService.getAll();
+    return this.userService.getAll();
   }
 
   @Get(':id')
@@ -69,7 +75,7 @@ export class UserController {
     )
     id: string,
   ): Promise<UserDto> {
-    return await this.userService.getOne(id);
+    return this.userService.getOne(id);
   }
 
   @Post()
@@ -85,7 +91,7 @@ export class UserController {
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserDto> {
-    return await this.userService.create(createUserDto);
+    return this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -112,7 +118,7 @@ export class UserController {
     id: string,
     @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
   ): Promise<UserDto> {
-    return await this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')

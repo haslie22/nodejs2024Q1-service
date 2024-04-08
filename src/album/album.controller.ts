@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -17,13 +18,18 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+
 @ApiTags('Album')
 @Controller('album')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
@@ -37,7 +43,7 @@ export class AlbumController {
     description: 'Albums found',
   })
   async getAll() {
-    return await this.albumService.getAll();
+    return this.albumService.getAll();
   }
 
   @Get(':id')
@@ -61,7 +67,7 @@ export class AlbumController {
     )
     id: string,
   ) {
-    return await this.albumService.getOne(id);
+    return this.albumService.getOne(id);
   }
 
   @Post()
@@ -75,7 +81,7 @@ export class AlbumController {
     description: 'Album created',
   })
   async create(@Body(new ValidationPipe()) createAlbumDto: CreateAlbumDto) {
-    return await this.albumService.create(createAlbumDto);
+    return this.albumService.create(createAlbumDto);
   }
 
   @Put(':id')
@@ -101,7 +107,7 @@ export class AlbumController {
     id: string,
     @Body(new ValidationPipe()) updateAlbumDto: UpdateAlbumDto,
   ) {
-    return await this.albumService.update(id, updateAlbumDto);
+    return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
@@ -114,7 +120,7 @@ export class AlbumController {
     type: String,
     description: 'The UUID v4 of the album',
   })
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
     description: 'Album deleted',

@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -17,14 +18,19 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+
 @ApiTags('Artist')
 @Controller('artist')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
@@ -35,7 +41,7 @@ export class ArtistController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Artists found' })
   async getAll() {
-    return await this.artistService.getAll();
+    return this.artistService.getAll();
   }
 
   @Get(':id')
@@ -62,7 +68,7 @@ export class ArtistController {
     )
     id: string,
   ) {
-    return await this.artistService.getOne(id);
+    return this.artistService.getOne(id);
   }
 
   @Post()
@@ -76,7 +82,7 @@ export class ArtistController {
     description: 'Artist created',
   })
   async create(@Body(new ValidationPipe()) createArtistDto: CreateArtistDto) {
-    return await this.artistService.create(createArtistDto);
+    return this.artistService.create(createArtistDto);
   }
 
   @Put(':id')
@@ -105,7 +111,7 @@ export class ArtistController {
     id: string,
     @Body(new ValidationPipe()) updateArtistDto: UpdateArtistDto,
   ) {
-    return await this.artistService.update(id, updateArtistDto);
+    return this.artistService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
