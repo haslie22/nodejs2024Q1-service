@@ -1,19 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
-import { Database } from 'src/database/database.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaClientErrorCode } from 'src/common/consts/consts';
+
 @Injectable()
 export class ArtistService {
-  constructor(private db: Database) {}
+  constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    return await this.db.getArtists();
+    return await this.prisma.artist.findMany();
   }
 
   async getOne(id: string) {
-    const targetArtist = await this.db.getArtist(id);
+    const targetArtist = await this.prisma.artist.findUnique({ where: { id } });
 
     if (!targetArtist) {
       throw new NotFoundException(`Artist with id ${id} not found`);
@@ -23,32 +26,37 @@ export class ArtistService {
   }
 
   async create(artist: CreateArtistDto) {
-    return await this.db.createArtist(artist);
+    return await this.prisma.artist.create({ data: artist });
   }
 
   async update(id: string, artistData: UpdateArtistDto) {
-    const targetArtist = await this.db.getArtist(id);
-
-    if (!targetArtist) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
+    try {
+      return await this.prisma.artist.update({
+        where: { id },
+        data: artistData,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PrismaClientErrorCode.RecordNotFound
+      ) {
+        throw new NotFoundException(`Artist with id ${id} not found`);
+      }
+      throw error;
     }
-
-    return await this.db.updateArtist(id, artistData);
   }
 
   async delete(id: string) {
-    const targetArtist = await this.db.getArtist(id);
-
-    if (!targetArtist) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
+    try {
+      return await this.prisma.artist.delete({ where: { id } });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PrismaClientErrorCode.RecordNotFound
+      ) {
+        throw new NotFoundException(`Artist with id ${id} not found`);
+      }
+      throw error;
     }
-
-    const artistTracks = await this.db.getTracksByArtist(id);
-    const artistAlbums = await this.db.getAlbumsByArtist(id);
-
-    artistTracks.map((track) => (track.artistId = null));
-    artistAlbums.map((album) => (album.artistId = null));
-
-    return await this.db.deleteArtist(id);
   }
 }

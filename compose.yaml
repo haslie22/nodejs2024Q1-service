@@ -1,0 +1,57 @@
+services:
+
+  server:
+    build:
+      context: .
+    develop:
+      watch:
+        - action: rebuild
+          path: ./src
+        - action: rebuild
+          path: package.json
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    ports:
+      - ${PORT}:${PORT}
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - custom-network
+
+  db:
+    image: postgres
+    restart: always
+    user: postgres
+    env_file:
+      - .env
+    expose:
+      - ${POSTGRES_PORT}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    command:
+      - "-c"
+      - "logging_collector=on"
+      - "-c"
+      - "log_directory=logs"
+      - "-c"
+      - "log_statement=all"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - custom-network
+
+volumes:
+  db-data:
+
+networks:
+  custom-network:
+    driver: bridge

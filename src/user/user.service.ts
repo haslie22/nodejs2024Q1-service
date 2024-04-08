@@ -3,44 +3,52 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 
-import { Database } from 'src/database/database.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { omit } from 'src/common/helpers/omit';
+
+import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaClientErrorCode } from 'src/common/consts/consts';
+import { prismaExclude } from 'src/common/helpers/prismaExclude';
+import { prismaModifyUser } from 'src/common/helpers/prismaModifyUser';
 
 @Injectable()
 export class UserService {
-  constructor(private db: Database) {}
+  constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    return await this.db.getUsers();
+    const users = await this.prisma.user.findMany({
+      select: prismaExclude('User', ['password']),
+    });
+
+    return users.map((user) => prismaModifyUser(user));
   }
 
   async getOne(id: string) {
-    const targetUser = await this.db.getUser(id);
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id },
+      select: prismaExclude('User', ['password']),
+    });
 
     if (!targetUser) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
 
-    return targetUser;
+    return prismaModifyUser(targetUser);
   }
 
   async create(user: CreateUserDto) {
-    // const existingUser = await this.db.getUserByLogin(user.login);
+    const newUser = await this.prisma.user.create({
+      data: user,
+      select: prismaExclude('User', ['password']),
+    });
 
-    // if (existingUser) {
-    //   throw new ConflictException(
-    //     `User with login ${user.login} already exists`,
-    //   );
-    // }
-
-    return omit(await this.db.createUser(user), ['password']);
+    return prismaModifyUser(newUser);
   }
 
   async update(id: string, userData: UpdateUserDto) {
-    const targetUser = await this.db.getUser(id);
+    const targetUser = await this.prisma.user.findUnique({ where: { id } });
 
     if (!targetUser) {
       throw new NotFoundException(`User with id ${id} not found`);
@@ -50,16 +58,29 @@ export class UserService {
       throw new ForbiddenException('Previous password is incorrect');
     }
 
-    return omit(await this.db.updateUser(id, userData), ['password']);
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        password: userData.newPassword,
+        version: { increment: 1 },
+      },
+      select: prismaExclude('User', ['password']),
+    });
+
+    return prismaModifyUser(updatedUser);
   }
 
   async delete(id: string) {
-    const targetUser = await this.db.getUser(id);
-
-    if (!targetUser) {
-      throw new NotFoundException(`User with id ${id} not found`);
+    try {
+      return await this.prisma.user.delete({ where: { id } });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PrismaClientErrorCode.RecordNotFound
+      ) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }
+      throw error;
     }
-
-    return await this.db.deleteUser(id);
   }
 }
