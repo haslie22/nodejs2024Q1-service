@@ -43,7 +43,20 @@ Postgres database starts on the indicated in the `.env` file (**5432**) port.
 
 :warning: If you encounter **`Already in use`** error, please stop processes that are using the indicated ports.
 
-## :package: Docker features
+## :orange_book: Postman Collection
+
+Discover the app API using this Postman Collection:
+
+[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://god.gw.postman.com/run-collection/24383003-db2513cf-a587-4cd5-b0c7-9e4f8844c17f?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D24383003-db2513cf-a587-4cd5-b0c7-9e4f8844c17f%26entityType%3Dcollection%26workspaceId%3Da7f2203f-5b3a-4a0a-a08b-a798ec838960)
+
+:one: Follow the link by clicking the orange button  
+:two: Press `Fork Collection` button in the popup  
+:three: Fill in `Fork label` and `Workspace` fields, or leave them as-is  
+:four: Proceed by clicking the `Fork Collection` button  
+:five: Set the neccessary values for the environmental variables in the `Variables` tab  
+:six: Send requests and explore the responses :mag:  
+
+## :package: Docker Features
 
 To perform a vulnerability scan and receive recommendations from Docker Scout, execute the following command:
 
@@ -53,7 +66,7 @@ npm run docker:full-analysis
 
 :link: To view the repository containing the app image on Docker Hub, please visit [this link](https://hub.docker.com/repository/docker/haslie22/home-library-service/general).
 
-## :card_file_box: Prisma features
+## :card_file_box: Prisma Features
 
 To access the GUI of the database, you can initiate it by running the following command:
 
@@ -128,13 +141,15 @@ To check refresh token functionality:
 npm run test:refresh
 ```
 
-:exclamation: If the tests fail with a **`read ECONNRESET`** error, it means that the container is currently rebuilding and unavailable. Please wait a moment and try again.
+:exclamation: If the tests fail with a **`read ECONNRESET`** error, it means that the container is currently rebuilding and unavailable. Please wait a moment and try again.  
+
+:warning: After adding the authentication functionality, tests which previously could be run with `npm run test` command should be run using `npm run test:refresh` instead.
 
 ### :memo: Documentation
 
 :link: Once the app is running, you can easily access the OpenAPI documentation by typing http://localhost:4000/doc/ into your browser's address bar.
 
-### :cherry_blossom: Auto-fix and format
+### :cherry_blossom: Auto-fix and Format
 
 To check existing linting and formatting:
 
